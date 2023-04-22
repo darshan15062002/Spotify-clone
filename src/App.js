@@ -1,25 +1,109 @@
-import logo from './logo.svg';
-import './App.css';
+
+
+import '../src/style/style.scss'
+import Login from './pages/Login'
+import Register from './pages/Register'
+
+
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+  Navigate
+} from "react-router-dom";
+import Home from './pages/Home/Home';
+import Navbar from './components/navbar/Navbar';
+
+
+// import { useContext } from 'react'
+// import { AuthContext } from './context/AuthContext'
+
+
+
+
+const Layout = () => {
+  return (
+    <div className="app">
+      <Navbar />
+      <Outlet />
+      {/* <Footer /> */}
+    </div>
+  )
+}
+
+
+// const ProtectedRoute = ({ children }) => {
+//   const { currentUser } = useContext(AuthContext)
+//   if (!currentUser) {
+//     return <Navigate to='/login' />
+//   }
+//   return children
+// }
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      // {
+      //   path: "/chating",
+      //   element: <ProtectedRoute><Chating /></ProtectedRoute>,
+      // },
+      // {
+      //   path: "/services",
+      //   element: <Services />,
+      // },
+      // {
+      //   path: "/about",
+      //   element: <About />,
+      // }, {
+      //   path: "/contact",
+      //   element: <Contact />,
+      // },
+
+      // {
+      //   path: "/message/:id",
+      //   element: <Message />,
+      // },
+      // {
+      //   path: "/add",
+      //   element: <Add />,
+      // },
+      // {
+      //   path: "/gig/:id",
+      //   element: <Gig />,
+      // },
+
+    ]
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  // {
+  //   path: "/volunteer-register",
+  //   element: <Volunteer />,
+  // },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+]);
+
+
 
 function App() {
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <RouterProvider router={router} />
     </div>
-  );
+  )
 }
 
 export default App;
