@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Sidebar from '../../components/Sidebar/Sidebar'
 import '../Home/Home.scss'
 import Podecast from '../../components/Podecast/Podecast'
 import Play from '../../components/play/Play'
 import { db } from "../../firebase";
 import { collection, collectionGroup, doc, getDocs, onSnapshot, query, where } from "firebase/firestore";
+import { SearchContext } from '../../context/SearchContext'
 
 
 
@@ -93,6 +94,26 @@ const podcasts = [
 const Home = () => {
     const [pod, setPod] = useState()
     const [filterdata, setFilterData] = useState([])
+    const [services, setServices] = useState([])
+    const { search, setSearch } = useContext(SearchContext);
+    console.log(search);
+
+    useEffect(() => {
+        const handleSubmit = async () => {
+
+
+            setServices(filterdata.filter((doc) => {
+                return doc.pname?.toLowerCase() === search?.toLowerCase();
+                // comparing category for displaying data
+            }))
+
+
+        }
+        search && handleSubmit()
+    }, [search])
+
+
+
 
 
     useEffect(() => {
@@ -104,13 +125,19 @@ const Home = () => {
             var userDocs = [];
             querySnapshot.forEach((doc) => {
 
+
                 userDocs.push(doc.data().podcast);
+
 
                 // array of documents for all users
 
             })
             console.log(userDocs.flat());
             setFilterData(userDocs.flat())
+
+
+
+
 
             return () => {
                 querySnapshot()
@@ -126,7 +153,7 @@ const Home = () => {
         <div className='home'>
             <div className="home__main">
                 <Sidebar />
-                <Podecast setPod={setPod} podcasts={podcasts} filterdata={filterdata} />
+                <Podecast setPod={setPod} podcasts={podcasts} filterdata={services.length === 0 ? filterdata : services} />
             </div>
 
             {pod && <Play pod={pod} />}

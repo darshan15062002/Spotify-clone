@@ -27,6 +27,7 @@ import { db } from './firebase';
 
 
 const Layout = () => {
+
   return (
     <div className="app">
       <Navbar />

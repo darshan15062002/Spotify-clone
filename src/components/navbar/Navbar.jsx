@@ -6,12 +6,20 @@ import { Link } from 'react-router-dom'
 import { AuthContext } from '../../context/AuthContext'
 import { signOut } from 'firebase/auth'
 import { auth, db } from '../../firebase'
-import { doc, onSnapshot } from 'firebase/firestore'
+import { doc, onSnapshot, query } from 'firebase/firestore'
+import { SearchContext } from '../../context/SearchContext'
 const Navbar = () => {
-    const [query, setQuery] = useState('')
+
     const [menu, setMenu] = useState(false)
     const [user, setUser] = useState({})
     const { currentUser } = useContext(AuthContext)
+    const { search, setSearch } = useContext(SearchContext);
+    const [query, setQuery] = useState('')
+
+
+
+
+
     console.log(currentUser);
     const handleManu = () => {
         setMenu(!menu)
@@ -35,7 +43,7 @@ const Navbar = () => {
                 </div>
                 <div className="navbar-Middle">
                     <img src={search} alt="" />
-                    <input maxlength="800" placeholder="What do you want to listen to?" value={query} />
+                    <input maxlength="800" placeholder="What do you want to listen to?" value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => setSearch(e.target.value)} />
                 </div>
                 {currentUser ? (
                     <div className="user" onClick={handleManu}>
