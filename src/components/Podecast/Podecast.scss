@@ -1,3 +1,9 @@
+@mixin mobile{
+    @media screen and (max-width:480px){
+        @content
+    }
+  }
+
 .podecast{
     flex:1;
     background: #1a1919;
@@ -33,6 +39,10 @@
             gap: 10px;
             position: relative;
             transition: 0.5s all ease;
+            @include mobile(){
+                height: 300px;
+                width: 200px;
+            }
             &:hover{
                   .podecast__Card--play{
                     display: block;

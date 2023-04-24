@@ -1,3 +1,8 @@
+@mixin mobile{
+    @media screen and (max-width:480px){
+        @content
+    }
+}
 .navbar{
     
     height: 4rem;
@@ -11,11 +16,15 @@
     color: white;
     padding: 0 100px;
     position: sticky;
+    @include mobile(){
+        padding: 0 10px; 
+    }
     .navbar-Container{
        height: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        
 
     .navbar-Left{
         display: flex;
@@ -36,6 +45,9 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        @include mobile(){
+            display: none;
+        }
         img{
             position: absolute;
             height: 25px;
@@ -52,13 +64,20 @@
         display: flex;justify-content: center;
         align-items: center;
         gap: 3rem;
+        @include mobile(){
+            gap: 1rem;
+        }
         .navbar_Signup{
 color: gray;
 text-decoration: none;
 font-weight: 700;
 font-size: 1rem;
 font-family: sans-serif;
+@include mobile(){
+    font-size: 0.7rem;
+}
         }
+
         .navbar-Login{
             background: white;
             padding: 10px 20px;
@@ -68,7 +87,9 @@ font-family: sans-serif;
             font-weight: 700;
             font-size: 1rem;
             font-family: sans-serif;
-
+            @include mobile(){
+                font-size: 0.7rem;
+            }
         }
     }
    

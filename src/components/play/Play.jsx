@@ -14,6 +14,7 @@ const Play = ({ pod }) => {
     const [duration, setDuration] = useState(0);
     useEffect(() => {
         setAudio(new Audio(pod.audioFile));
+
     }, [pod]);
 
     useEffect(() => {
@@ -46,6 +47,8 @@ const Play = ({ pod }) => {
         setCurrentTime(newTime);
     };
 
+    console.log(window.innerWidth);
+
     return (
         <div className='play'>
             <div className='play__Left'>
@@ -57,10 +60,10 @@ const Play = ({ pod }) => {
             </div>
             <div className='play__middle' >
                 <div className='play__middle--icon' >
-                    <BiSkipPrevious size={40} />
-                    {isPlaying ? <BiPause size={40} onClick={togglePlay} /> : <BiPlay size={40} onClick={togglePlay} />}
+                    <BiSkipPrevious size={window.innerWidth < 480 ? 30 : 40} />
+                    {isPlaying ? <BiPause size={window.innerWidth < 480 ? 30 : 40} onClick={togglePlay} /> : <BiPlay size={window.innerWidth < 480 ? 30 : 40} onClick={togglePlay} />}
 
-                    <BiSkipNext size={40} />
+                    <BiSkipNext size={window.innerWidth < 480 ? 30 : 40} />
                 </div>
                 <div className='progress_container'>
 
