@@ -4,10 +4,14 @@
     padding: 50px ;
     scroll-behavior: smooth;
     overflow-y: scroll;
+    scroll-behavior: smooth;
+   
+    -webkit-overflow-scrolling: touch;
     h1{
         color: white;
         font-family: sans-serif;
         font-weight: 900;
+        margin-left: 40px;
         border-bottom: 2px solid #ED0EF1;
         width: fit-content;
         padding-bottom: 2px;
@@ -16,15 +20,17 @@
         margin-top: 20px;
         display: flex;
         flex-wrap: wrap;
-        gap: 20px;
+        align-items: center;
+        justify-content: center;
+        gap: 40px;
         .podecast__Card{
-            height: 250px;
-            width: 180px;
+            height: 300px;
+            width: 200px;
             background: black;
             border-radius: 20px;
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 10px;
             position: relative;
             transition: 0.5s all ease;
             &:hover{
@@ -45,8 +51,8 @@
             
           
             img{
-                height: 120px;
-                width: 200;
+                height: 140px;
+                width: 200px;
                 border-top-right-radius: 20px;
                 border-top-left-radius: 20px;
 

@@ -1,24 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './Play.scss'
-import { BiLike, BiPause, BiSkipNext, BiSkipPrevious } from 'react-icons/bi';
+import { BiPause, BiPlay, BiSkipNext, BiSkipPrevious } from 'react-icons/bi';
 
 
-const podcasts =
-{
-    image: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQzaR0qzqsdEOASSWcp4cU4kIyYm66HfYdhyVTnYgkF2rfZoC8",
-    name: "The Example Podcast",
-    description: "A podcast about examples",
-    category: "Education",
-    audioFile: "https://example.com/podcast1.mp3",
-    artistName: "John Doe",
-    artistImage: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg"
-}
 
-const Play = () => {
-    const [audio] = useState(new Audio('/path/to/audio/file.mp3'));
+
+const Play = ({ pod }) => {
+
+    const audioRef = useRef();
+    const [audio, setAudio] = useState(new Audio(pod.audioFile));
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
+    useEffect(() => {
+        setAudio(new Audio(pod.audioFile));
+    }, [pod]);
 
     useEffect(() => {
         // Set up event listeners for the audio element
@@ -53,28 +49,29 @@ const Play = () => {
     return (
         <div className='play'>
             <div className='play__Left'>
-                <img src={podcasts.image} alt="song_img" />
+                <img src={pod?.image} alt="song_img" />
                 <div className='play__Info'>
-                    <p >{podcasts.name}</p>
-                    <p >{podcasts.artistName}</p>
+                    <p >{pod?.name}</p>
+                    <p >{pod?.artistName}</p>
                 </div>
             </div>
             <div className='play__middle' >
-                <div >
-                    <BiSkipPrevious />
-                    <BiPause />
-                    <BiSkipNext />
-                </div>
-                <div>
+                <div className='play__middle--icon' >
+                    <BiSkipPrevious size={40} />
+                    {isPlaying ? <BiPause size={40} onClick={togglePlay} /> : <BiPlay size={40} onClick={togglePlay} />}
 
-                    <input type="range" min="0" max={duration} value={currentTime} onChange={handleProgressChange} />
-                    <audio src={"bk"} ></audio>
+                    <BiSkipNext size={40} />
+                </div>
+                <div className='progress_container'>
+
+                    <input type="range" className='progress' min="0" max={duration} value={currentTime} onChange={handleProgressChange} />
+                    {/* <audio src={"https://samplelib.com/lib/preview/mp3/sample-3s.mp3"} ref={audioRef}></audio> */}
 
                 </div>
             </div>
-            <div>
+            {/* <div>
                 < BiLike />
-            </div>
+            </div> */}
         </div>
     )
 }

@@ -1,15 +1,16 @@
 .home{
  position: relative;
-
-
+  
 }
 .home__main{
     
     display: flex;
-    height: 75vh;
+    height: 100vh;
     overflow: hidden;
     flex:1;
-    -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+    flex-wrap: nowrap;
+ 
+  
+ 
    
 }

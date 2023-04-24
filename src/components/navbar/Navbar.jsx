@@ -5,14 +5,23 @@ import search from '../../img/search.png'
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../../context/AuthContext'
 import { signOut } from 'firebase/auth'
-import { auth } from '../../firebase'
+import { auth, db } from '../../firebase'
+import { doc, onSnapshot } from 'firebase/firestore'
 const Navbar = () => {
     const [query, setQuery] = useState('')
     const [menu, setMenu] = useState(false)
+    const [user, setUser] = useState({})
     const { currentUser } = useContext(AuthContext)
     console.log(currentUser);
     const handleManu = () => {
         setMenu(!menu)
+        const unsub = onSnapshot(doc(db, "users", currentUser.uid), (doc) => {
+            setUser(doc.data())
+        });
+
+        return () => {
+            unsub()
+        }
     }
 
 
@@ -34,9 +43,9 @@ const Navbar = () => {
                         <span>{currentUser?.displayName}</span>
                         {menu && <div className="options">
 
-                            <Link className="link" to="/chating">
-                                Messages
-                            </Link>
+                            {user?.isAdmin && <Link className="link" to="/addpodcast">
+                                Add Podcast
+                            </Link>}
                             <p className="link" to="/">
                                 <button onClick={() => signOut(auth)}>Logout</button>
 

@@ -1,7 +1,8 @@
 import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const Login = () => {
   const navigate = useNavigate()
@@ -17,7 +18,7 @@ const Login = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password)
-
+      navigate('/')
 
     } catch (err) {
       setErr(true);
@@ -26,7 +27,35 @@ const Login = () => {
   };
   const provider = new GoogleAuthProvider()
   const handleGoogle = () => {
-    signInWithPopup(auth, provider).then((result) => {
+    signInWithPopup(auth, provider).then(async (result) => {
+
+      console.log(result);
+      // //Update profile
+      // await updateProfile(res.user, {
+      //   displayName: name,
+      //   photoURL: downloadURL,
+
+      // });
+      const res = await getDoc(doc(db, "users", result.user.uid))
+      if (!res.exists()) {
+        //create user on firestore
+        await setDoc(doc(db, "users", result.user.uid), {
+          uid: result.user.uid,
+          displayName: result.user.displayName,
+          email: result.user.email,
+
+          photoURL: result.user.photoURL,
+        });
+
+        navigate("/");
+      }
+      navigate("/");
+
+
+
+
+
+
       navigate('/')
     }).catch((err) => {
       setErr(true)

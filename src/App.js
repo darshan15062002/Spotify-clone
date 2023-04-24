@@ -13,6 +13,11 @@ import {
 } from "react-router-dom";
 import Home from './pages/Home/Home';
 import Navbar from './components/navbar/Navbar';
+import Addpodcast from './pages/Addpodcast/Addpodcast';
+import { useContext, useEffect, useState } from 'react';
+import { AuthContext } from './context/AuthContext';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from './firebase';
 
 
 // import { useContext } from 'react'
@@ -34,7 +39,21 @@ const Layout = () => {
 
 // const ProtectedRoute = ({ children }) => {
 //   const { currentUser } = useContext(AuthContext)
-//   if (!currentUser) {
+//   const [user, setUser] = useState({})
+//   console.log(user);
+//   useEffect(() => {
+//     const unsub = onSnapshot(doc(db, "users", currentUser.uid), (doc) => {
+//       setUser(doc.data())
+//     });
+
+//     return () => {
+//       unsub()
+//     }
+//   }, [])
+
+
+
+//   if (user.isAdmin === true) {
 //     return <Navigate to='/login' />
 //   }
 //   return children
@@ -49,10 +68,7 @@ const router = createBrowserRouter([
         path: "/",
         element: <Home />,
       },
-      // {
-      //   path: "/chating",
-      //   element: <ProtectedRoute><Chating /></ProtectedRoute>,
-      // },
+
       // {
       //   path: "/services",
       //   element: <Services />,
@@ -84,10 +100,10 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
   },
-  // {
-  //   path: "/volunteer-register",
-  //   element: <Volunteer />,
-  // },
+  {
+    path: "/addpodcast",
+    element: <Addpodcast />,
+  },
   {
     path: "/login",
     element: <Login />,

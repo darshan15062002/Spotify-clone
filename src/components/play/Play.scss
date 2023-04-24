@@ -3,19 +3,45 @@
     position: sticky;
     height: 5rem;
    left: 0;
+
     bottom: 0;
+    padding: 0 40px;
     z-index: 100;
     background: #000;
-    justify-content: space-between;
+    
+    align-items: center;
     color: white;
     .play__Left{
         display: flex;
         align-items: center;
         font-size: 12px;
         gap: 20px;
+        width: 33.33%;
         img{
-            height: 40px;
-            width: 40px;
+            height: 50px;
+            width: 50px;
         }
     }
+    .play__middle{
+        width: 33.33%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+         max-width: 600px;
+        .progress_container {
+			display: flex;
+			align-items: center;
+			
+
+			
+			.progress {
+				width: 30rem;
+				height: 0.5rem;
+                
+			}
+		}
+	}
+    
 }
