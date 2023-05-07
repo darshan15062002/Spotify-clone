@@ -9,15 +9,12 @@ import {
   createBrowserRouter,
   RouterProvider,
   Outlet,
-  Navigate
+
 } from "react-router-dom";
 import Home from './pages/Home/Home';
 import Navbar from './components/navbar/Navbar';
 import Addpodcast from './pages/Addpodcast/Addpodcast';
-import { useContext, useEffect, useState } from 'react';
-import { AuthContext } from './context/AuthContext';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from './firebase';
+
 
 
 // import { useContext } from 'react'
@@ -70,30 +67,6 @@ const router = createBrowserRouter([
         element: <Home />,
       },
 
-      // {
-      //   path: "/services",
-      //   element: <Services />,
-      // },
-      // {
-      //   path: "/about",
-      //   element: <About />,
-      // }, {
-      //   path: "/contact",
-      //   element: <Contact />,
-      // },
-
-      // {
-      //   path: "/message/:id",
-      //   element: <Message />,
-      // },
-      // {
-      //   path: "/add",
-      //   element: <Add />,
-      // },
-      // {
-      //   path: "/gig/:id",
-      //   element: <Gig />,
-      // },
 
     ]
   },

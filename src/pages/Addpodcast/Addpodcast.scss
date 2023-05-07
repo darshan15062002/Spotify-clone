@@ -1,6 +1,29 @@
+@mixin mobile{
+  @media screen and (max-width:480px){
+      @content
+  }
+}
 .formContainer{
+
+
+  
+  .formWrapper__col{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    @include mobile(){
+      display: flex;
+      height: 100%;
+   
+    justify-content: center;
+    flex-direction: column;
+    }
+
+  }
+
+  
     .right{
-        height: 70vh;
+        height: 450px;
           .service-list{
             height: 90%;
             scroll-behavior: smooth;
@@ -28,6 +51,9 @@
             background-color: aliceblue;
             border-radius: 10px;
             position: relative;
+            @include mobile(){
+              width: 250px;
+            }
             .edit{
                position: absolute;
                right: 5px;
@@ -42,6 +68,9 @@
               display: flex;
               justify-content: center;
               flex-direction: column;
+              @include mobile(){
+               font-size: 10px;
+              }
             }
             img{
                 height: 70px;
@@ -58,5 +87,5 @@
           }
 } 
     }
- 
-}
+  }
+

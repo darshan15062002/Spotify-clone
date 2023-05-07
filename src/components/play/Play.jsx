@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Play.scss'
 import { BiPause, BiPlay, BiSkipNext, BiSkipPrevious } from 'react-icons/bi';
 
@@ -7,12 +7,13 @@ import { BiPause, BiPlay, BiSkipNext, BiSkipPrevious } from 'react-icons/bi';
 
 const Play = ({ pod }) => {
 
-    const audioRef = useRef();
     const [audio, setAudio] = useState(new Audio(pod.audioFile));
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     useEffect(() => {
+        audio.pause();
+
         setAudio(new Audio(pod.audioFile));
 
     }, [pod]);
@@ -67,7 +68,7 @@ const Play = ({ pod }) => {
                 </div>
                 <div className='progress_container'>
 
-                    <input type="range" className='progress' min="0" max={duration} value={currentTime} onChange={handleProgressChange} />
+                    <input type="range" className='progress' min="0" max={duration} value={currentTime} onChange={handleProgressChange} style={{ height: '2px', color: '#19C2E8' }} />
                     {/* <audio src={"https://samplelib.com/lib/preview/mp3/sample-3s.mp3"} ref={audioRef}></audio> */}
 
                 </div>

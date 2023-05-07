@@ -1,3 +1,8 @@
+@mixin mobile{
+  @media screen and (max-width:480px){
+      @content
+  }
+}
 *{
     margin: 0;
     padding: 0;
@@ -18,7 +23,7 @@ background-size: contain;
         align-items: center;
         background-repeat: no-repeat;
    
-  
+       
     .formWrapper {
       background-color: rgb(255, 255, 255);
     
@@ -29,6 +34,10 @@ background-size: contain;
       gap: 12px;
       z-index: 0;
       border-radius: 12px;
+      @include mobile(){
+          width: 90%;
+          margin: 20px;
+      }
       .google-Auth{
         button{
           display: flex;

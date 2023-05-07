@@ -8,17 +8,17 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { Timestamp, arrayUnion, doc, getDoc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore'
 import { AuthContext } from '../../context/AuthContext'
 import { v4 as uuid } from 'uuid'
-import { icons } from 'react-icons'
+
 import { useNavigate } from 'react-router-dom'
 
 const Addpodcast = () => {
     const navigate = useNavigate()
     const formRef = useRef(null);
     const { currentUser } = useContext(AuthContext)
-    // const [audio, setAudio] = useState()
+
     const [img, setImg] = useState()
     const [img2, setImg2] = useState()
-    const [downloadlink, setDownloadLink] = useState([])
+
     const [services, setServices] = useState([])
 
 
@@ -40,7 +40,7 @@ const Addpodcast = () => {
         }
         currentUser && getServices()
 
-    }, [])
+    }, [currentUser])
 
 
 
@@ -108,7 +108,7 @@ const Addpodcast = () => {
     return (
         <div className='formContainer' >
             <BiArrowBack size={40} style={{ color: 'white', padding: "10px", position: 'absolute', top: "20px", left: "20px", background: '#19C2E8', borderRadius: '100%' }} onClick={() => navigate('/')} />
-            <div className="formWrapper" style={{ display: 'flex', flexDirection: 'row', gap: '60px' }}>
+            <div className="formWrapper formWrapper__col" style={{ gap: '60px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span className="logo">ZED Talks</span>
                     <span className="title">Create Podcast</span>
@@ -148,15 +148,15 @@ const Addpodcast = () => {
 
                     <h2>Previously added Podcast</h2>
                     <div className="service-list">
-                        {services?.map((item, index) => (
+                        {services !== 0 ? services?.map((item, index) => (
 
 
-                            <div key={item.id} className="service-card">
-                                <img src={item.downloadlink[0]} alt='' />
+                            <div key={item?.id} className="service-card">
+                                <img src={item?.downloadlink[0]} alt='' />
                                 <div className="card-info">
-                                    <h3>{item.pname}</h3>
-                                    <p>{item.description}</p>
-                                    <span> {item.category} </span>
+                                    <h3>{item?.pname}</h3>
+                                    <p>{item?.description}</p>
+                                    <span> {item?.category} </span>
                                 </div>
                                 {/* <div className="edit" onClick={() => handleEdit(item.topic, item.description, item.photoURL, item.price, item.userId)}> */}
                                 <div className="edit">
@@ -164,7 +164,7 @@ const Addpodcast = () => {
                                 </div>
                             </div>
 
-                        ))}
+                        )) : <h1>Loading....</h1>}
                     </div>
                 </div>
             </div>
