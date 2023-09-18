@@ -1,75 +1,108 @@
 import React, { useEffect, useState } from 'react'
 import './Play.scss'
 import { BiPause, BiPlay, BiSkipNext, BiSkipPrevious } from 'react-icons/bi';
+import { useStateValue } from '../../StateProvider';
 
 
 
 
-const Play = ({ pod }) => {
+const Play = ({ spotify }) => {
+    const [{ token, item, playing }, dispatch] = useStateValue();
 
-    const [audio, setAudio] = useState(new Audio(pod.audioFile));
+
+
+    console.log(playing, "song is playing");
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
-    useEffect(() => {
-        audio.pause();
 
-        setAudio(new Audio(pod.audioFile));
-
-    }, [pod]);
 
     useEffect(() => {
-        // Set up event listeners for the audio element
-        audio.addEventListener('play', () => setIsPlaying(true));
-        audio.addEventListener('pause', () => setIsPlaying(false));
-        audio.addEventListener('timeupdate', () => setCurrentTime(audio.currentTime));
-        audio.addEventListener('durationchange', () => setDuration(audio.duration));
+        spotify.getMyCurrentPlaybackState().then((r) => {
+            console.log(r);
 
-        // Clean up event listeners when the component unmounts
-        return () => {
-            audio.removeEventListener('play', () => setIsPlaying(true));
-            audio.removeEventListener('pause', () => setIsPlaying(false));
-            audio.removeEventListener('timeupdate', () => setCurrentTime(audio.currentTime));
-            audio.removeEventListener('durationchange', () => setDuration(audio.duration));
-        };
-    }, [audio]);
+            dispatch({
+                type: "SET_PLAYING",
+                playing: r.is_playing,
+            });
 
-    const togglePlay = () => {
-        if (isPlaying) {
-            audio.pause();
+            dispatch({
+                type: "SET_ITEM",
+                item: r.item,
+            });
+        });
+    }, [spotify]);
+
+    const handlePlayPause = () => {
+        if (playing) {
+            spotify.pause();
+            dispatch({
+                type: "SET_PLAYING",
+                playing: false,
+            });
         } else {
-            audio.play();
+            spotify.play();
+            dispatch({
+                type: "SET_PLAYING",
+                playing: true,
+            });
         }
     };
 
-    const handleProgressChange = (event) => {
-        const newTime = event.target.value;
-        audio.currentTime = newTime;
-        setCurrentTime(newTime);
+    const skipNext = () => {
+        spotify.skipToNext();
+        spotify.getMyCurrentPlayingTrack().then((r) => {
+            dispatch({
+                type: "SET_ITEM",
+                item: r.item,
+            });
+            dispatch({
+                type: "SET_PLAYING",
+                playing: true,
+            });
+        });
     };
 
-    console.log(window.innerWidth);
+    const skipPrevious = () => {
+        spotify.skipToPrevious();
+        spotify.getMyCurrentPlayingTrack().then((r) => {
+            dispatch({
+                type: "SET_ITEM",
+                item: r.item,
+            });
+            dispatch({
+                type: "SET_PLAYING",
+                playing: true,
+            });
+        });
+    };
+
+
+
+
+
+
 
     return (
         <div className='play'>
             <div className='play__Left'>
-                <img src={pod?.image} alt="song_img" />
+                <img src={item?.album.images[0].url} alt={item?.name} />
                 <div className='play__Info'>
-                    <p >{pod?.name}</p>
-                    <p >{pod?.artistName}</p>
+                    <p >{item.name}</p>
+                    <p>{item.artists.map((artist) => artist.name).join(", ")}</p>
                 </div>
             </div>
             <div className='play__middle' >
                 <div className='play__middle--icon' >
                     <BiSkipPrevious size={window.innerWidth < 480 ? 30 : 40} />
-                    {isPlaying ? <BiPause size={window.innerWidth < 480 ? 30 : 40} onClick={togglePlay} /> : <BiPlay size={window.innerWidth < 480 ? 30 : 40} onClick={togglePlay} />}
+                    {isPlaying ? <BiPause size={window.innerWidth < 480 ? 30 : 40} onClick={handlePlayPause} /> : <BiPlay size={window.innerWidth < 480 ? 30 : 40} onClick={handlePlayPause} />}
 
                     <BiSkipNext size={window.innerWidth < 480 ? 30 : 40} />
                 </div>
                 <div className='progress_container'>
 
-                    <input type="range" className='progress' min="0" max={duration} value={currentTime} onChange={handleProgressChange} style={{ height: '2px', color: '#19C2E8' }} />
-                    {/* <audio src={"https://samplelib.com/lib/preview/mp3/sample-3s.mp3"} ref={audioRef}></audio> */}
+                    <input type="range" className='progress' min="0" max={duration} value={currentTime} onChange={handlePlayPause} style={{ height: '2px', color: '#19C2E8' }} />
+
 
                 </div>
             </div>

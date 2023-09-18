@@ -8,29 +8,18 @@ import { signOut } from 'firebase/auth'
 import { auth, db } from '../../firebase'
 import { doc, onSnapshot, query } from 'firebase/firestore'
 import { SearchContext } from '../../context/SearchContext'
+import { loginUrl } from '../../spotify'
+import { useStateValue } from '../../StateProvider'
 const Navbar = () => {
 
     const [menu, setMenu] = useState(false)
-    const [user, setUser] = useState({})
-    const { currentUser } = useContext(AuthContext)
+
     const { search, setSearch } = useContext(SearchContext);
     const [query, setQuery] = useState('')
 
+    const [{ user }, dispatch] = useStateValue();
+    console.log("here is  user", user);
 
-
-
-
-    console.log(currentUser);
-    const handleManu = () => {
-        setMenu(!menu)
-        const unsub = onSnapshot(doc(db, "users", currentUser.uid), (doc) => {
-            setUser(doc.data())
-        });
-
-        return () => {
-            unsub()
-        }
-    }
 
 
 
@@ -45,11 +34,11 @@ const Navbar = () => {
                     <img src={search} alt="" />
                     <input maxlength="800" placeholder="What do you want to listen to?" value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => setSearch(e.target.value)} />
                 </div>
-                {currentUser ? (
-                    <div className="user" onClick={handleManu}>
-                        <img src={currentUser.photoURL} alt="" />
-                        <span>{currentUser?.displayName}</span>
-                        {menu && <div className="options">
+                {user ? (
+                    <div className="user" >
+                        <img src={user?.images[0] ? user?.images[0].url : null} alt="" />
+                        <span>{user?.display_name}</span>
+                        {/* {menu && <div className="options">
 
                             {user?.isAdmin && <Link className="link" to="/addpodcast">
                                 Add Podcast
@@ -58,10 +47,9 @@ const Navbar = () => {
                                 <button onClick={() => signOut(auth)}>Logout</button>
 
                             </p>
-                        </div>}
+                        </div>} */}
                     </div>) : (<div className="navbar-Right">
-                        <Link to={'/register'} className='navbar_Signup'><span>Sign Up</span></Link>
-                        <Link to={'/login'} className='navbar-Login'><span>Log in</span></Link>
+                        <a href={loginUrl} className='navbar-Login'><span>Log In</span></a>
                     </div>)}
             </div>
         </div>

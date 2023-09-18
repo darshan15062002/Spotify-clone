@@ -1,16 +1,17 @@
 .home{
  position: relative;
+  display: flex;
   
 }
 .home__main{
-    
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
-    flex:1;
-    flex-wrap: nowrap;
- 
-  
- 
-   
+display: flex;
+
+flex: 1;
+}
+
+.songe_Card{
+  background: #000;
+  height: 300px;
+  width: 200px;
+
 }

@@ -1,151 +1,96 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Sidebar from '../../components/Sidebar/Sidebar'
 import '../Home/Home.scss'
-import Podecast from '../../components/Podecast/Podecast'
+
 import Play from '../../components/play/Play'
-import { db } from "../../firebase";
-import { collection, collectionGroup, doc, getDocs, onSnapshot, query, where } from "firebase/firestore";
 import { SearchContext } from '../../context/SearchContext'
 
+import { getTokenFromResponse } from '../../spotify'
+
+// this npm package help us to comunicate with spotify api 
+import SpotifyWebApi from "spotify-web-api-js";
+import { useStateValue } from '../../StateProvider'
+import Body from '../../components/body/Body'
 
 
-const podcasts = [
-    {
-        _id: 1,
-        image: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQzaR0qzqsdEOASSWcp4cU4kIyYm66HfYdhyVTnYgkF2rfZoC8",
-        name: "The Example Podcast",
-        description: "A podcast about examples",
-        category: "Education",
-        audioFile: "https://samplelib.com/lib/preview/mp3/sample-15s.mp3",
-        artistName: "John Doe",
-        artistImage: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg"
-    },
-    {
-        _id: 2,
-        image: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSSnxZB6Rsy7G_nfPokcO7MgSKtZt_kIeE6dK3MlfydQw5Qw-U",
-        name: "The Other Example Podcast",
-        description: "A podcast about other examples",
-        category: "Education",
-        audioFile: "https://example.com/podcast2.mp3",
-        artistName: "Jane Smith",
-        artistImage: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg"
-    },
-    {
-        _id: 3,
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShXa01mKYs6KrrwaaIQcIMcU8MagIvLLTRfXxZsOrxRMJ30pw",
-        name: "The Cool Podcast",
-        description: "A podcast about cool things",
-        category: "Entertainment",
-        audioFile: "https://example.com/podcast3.mp3",
-        artistName: "Bob Johnson",
-        artistImage: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg"
-    },
-    {
-        _id: 4,
-        image: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQzaR0qzqsdEOASSWcp4cU4kIyYm66HfYdhyVTnYgkF2rfZoC8",
-        name: "The Example Podcast",
-        description: "A podcast about examples",
-        category: "Education",
-        audioFile: "https://example.com/podcast1.mp3",
-        artistName: "John Doe",
-        artistImage: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg"
-    },
-    {
-        _id: 5,
-        image: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQzaR0qzqsdEOASSWcp4cU4kIyYm66HfYdhyVTnYgkF2rfZoC8",
-        name: "The Example Podcast",
-        description: "A podcast about examples",
-        category: "Education",
-        audioFile: "https://example.com/podcast1.mp3",
-        artistName: "John Doe",
-        artistImage: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg"
-    },
-    {
-        _id: 6,
-        image: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQzaR0qzqsdEOASSWcp4cU4kIyYm66HfYdhyVTnYgkF2rfZoC8",
-        name: "The Example Podcast",
-        description: "A podcast about examples",
-        category: "Education",
-        audioFile: "https://example.com/podcast1.mp3",
-        artistName: "John Doe",
-        artistImage: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg"
-    },
-    {
-        _id: 7,
-        image: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQzaR0qzqsdEOASSWcp4cU4kIyYm66HfYdhyVTnYgkF2rfZoC8",
-        name: "The Example Podcast",
-        description: "A podcast about examples",
-        category: "Education",
-        audioFile: "https://example.com/podcast1.mp3",
-        artistName: "John Doe",
-        artistImage: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg"
-    },
-    {
-        _id: 8,
-        image: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQzaR0qzqsdEOASSWcp4cU4kIyYm66HfYdhyVTnYgkF2rfZoC8",
-        name: "The Example Podcast",
-        description: "A podcast about examples",
-        category: "Education",
-        audioFile: "https://samplelib.com/lib/preview/mp3/sample-9s.mp3",
-        artistName: "John Doe",
-        artistImage: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg"
-    },
-]
+
+// intance spotify
+const s = new SpotifyWebApi();
+
+
 const Home = () => {
-    const [pod, setPod] = useState()
-    const [filterdata, setFilterData] = useState([])
-    const [services, setServices] = useState([])
+    const [{ token_, playing }, dispatch] = useStateValue();
+    console.log("curr plaing song------------------------------------------", playing);
+
+
+    const [token, setToken] = useState(null)
+    const [login, setLoggIn] = useState(false)
+    const [nowPlaying, setNowPlaying] = useState({})
     const { search, setSearch } = useContext(SearchContext);
-    console.log(search);
-
-    useEffect(() => {
-        const handleSubmit = async () => {
-
-
-            setServices(filterdata.filter((doc) => {
-                return doc.pname?.toLowerCase() === search?.toLowerCase();
-                // comparing category for displaying data
-            }))
-
-
-        }
-        search && handleSubmit()
-    }, [search])
-
-
 
 
 
     useEffect(() => {
-        const getServices = async () => {
-            const q = query(collection(db, "podcast"));
+        // Set token
+        const _token = getTokenFromResponse().access_token;
+        // clean use=l from brwser as soon as posible because it contains credentials
+        window.location.hash = "";
 
-            const querySnapshot = await getDocs(q);
+        if (_token) {
+            setToken(_token)
+            setLoggIn(true)
+            s.setAccessToken(_token)
 
-            var userDocs = [];
-            querySnapshot.forEach((doc) => {
+            dispatch({
+                type: "SET_TOKEN",
+                token: _token,
+            });
+
+            s.getPlaylist("4JZFUSM0jb3RauYuRPIUp8").then((response) =>
+
+                dispatch({
+                    type: "SET_DISCOVER_WEEKLY",
+                    discover_weekly: response,
+                })
+            );
+
+            s.getMyTopArtists().then((response) =>
+                dispatch({
+                    type: "SET_TOP_ARTISTS",
+                    top_artists: response,
+                })
+            );
+
+            dispatch({
+                type: "SET_SPOTIFY",
+                spotify: s,
+            });
+
+            s.getMe().then((user) => {
+                console.log(user);
+                dispatch({
+                    type: "SET_USER",
+                    user,
+                });
+            });
+
+            s.getUserPlaylists().then((playlists) => {
+                dispatch({
+                    type: "SET_PLAYLISTS",
+                    playlists,
+                });
+            });
 
 
-                userDocs.push(doc.data().podcast);
 
-
-                // array of documents for all users
-
-            })
-            console.log(userDocs.flat());
-            setFilterData(userDocs.flat())
-
-
-
-
-
-            return () => {
-                querySnapshot()
-            }
         }
-        getServices()
 
-    }, [])
+
+
+
+    }, [token_, dispatch])
+
+
 
 
 
@@ -153,12 +98,22 @@ const Home = () => {
         <div className='home'>
             <div className="home__main">
                 <Sidebar />
-                <Podecast setPod={setPod} podcasts={podcasts} filterdata={services.length === 0 ? filterdata : services} />
+
+                {token ? (
+
+                    <Body spotify={s} />
+                ) : (
+                    <h1>No song</h1>
+
+                )
+                }
             </div>
+            {playing && <Play spotify={s} />}
 
-            {pod && <Play pod={pod} />}
 
-        </div>
+
+        </div >
+
     )
 }
 
